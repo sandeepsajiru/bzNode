@@ -27,15 +27,24 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 
-
 // DB CONNECTION
-var dbName = 'testDb';
+
+var dbName = 'dingco';
 var connString = 'mongodb://localhost/'+dbName;
+
+if(env==='production'){
+    connString = 'mongodb://admin:111_aaaa@ds053818.mlab.com:53818/'+dbName;
+    console.log("ENV::: PRODUCTION");
+}
+else{
+    console.log("ENV::: DEVELOPMENT");
+}
+
 mongoose.connect(connString);
 var db = mongoose.connection;
 
-db.on('error', function(err){
-    console.log('Error Connecting to Mongodb '+err);
+db.on('error', function (err) {
+    console.log('Error Connecting to Mongodb ' + err);
     //consol.error.bind(console, 'connection error');
 });
 
@@ -51,12 +60,17 @@ var msgSchema = mongoose.Schema({message:String});
 var msgModel = mongoose.model('Message', msgSchema);
 
 // WRITE MSG TO DB
+
 var msgObjToSave = new msgModel({message: 'This is a fresh message' });
+
+/*
 msgObjToSave.save(
     function (err){
         if (err)
             console.log('Failed to Save Message');
 });
+*/
+
 
 
 // READ MSG FROM DB
@@ -65,6 +79,7 @@ msgModel.findOne().exec(function(err, msgDocument){
     msgFromDB = msgDocument.message;
     console.log('Got the message from DB '+msgFromDB);
 });
+
 
 
 app.get('/partials/:partialPath', function(req, res) {
@@ -81,7 +96,7 @@ app.get('/', function(req, res){
 });
 
 
-var port = 3000;
+var port = process.env.PORT || 3000;
 app.listen(port);
-console.log('http://localhost:'+port);
-open('http://localhost:'+port);
+//console.log('http://localhost:'+port);
+//open('http://localhost:'+port);

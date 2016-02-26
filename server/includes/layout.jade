@@ -3,6 +3,24 @@ html(lang="en")
   head
     title= pageTitle
     include styles
+    //link(rel='stylesheet',href='/css/bootstrap.css')
+    link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css')
   body(ng-app='app')
-        block main-content  
-        include scripts
+    .navbar.navbar-inverse.navbar-fixed-top
+        .container 
+            .navbar-header 
+                a.navbar-brand(href='#') DingCo
+                    h6 -Fundoo Coding
+                .navbar-collapse.collapse
+                    ul.nav.nanvbar-nav
+                        li
+                            a(href='#') Home
+
+                            h1(id="title") Welcome to Jade
+                button(class="btn btn-primary", data-action="bea").
+                  Be Awesome
+
+            block main-content  
+            include scripts
+
+            script(src='//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js', async=true)
