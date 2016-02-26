@@ -1,6 +1,8 @@
 var express = require('express'),
     stylus = require('stylus'),
-    open = require('open');
+    open = require('open'),
+    bodyParser = require('body-parser');
+
 
 var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -20,9 +22,18 @@ app.use(stylus.middleware(
         compile:compile
     }
 ));
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 
-app.get('*', function(req, res){
+app.get('/partials/:partialPath', function(req, res) {
+    console.log('partial requested '+req.params.partialPath);
+    res.render('partials/' + req.params.partialPath);
+});
+
+
+app.get('/', function(req, res){
+    console.log('main page requested');
     res.render('index');
 });
 
