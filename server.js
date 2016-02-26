@@ -27,17 +27,6 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 
-app.get('/partials/:partialPath', function(req, res) {
-    console.log('partial requested '+req.params.partialPath);
-    res.render('partials/' + req.params.partialPath);
-});
-
-
-app.get('/', function(req, res){
-    console.log('main page requested');
-    res.render('index');
-});
-
 
 // DB CONNECTION
 var dbName = 'testDb';
@@ -53,6 +42,44 @@ db.on('error', function(err){
 db.once('open', function callback(){
    console.log('MongoDB Connection Opened'); 
 });
+
+// SHOWING DB CONTENT
+// Define a Schema
+var msgSchema = mongoose.Schema({message:String});
+
+// Create a Model - In Memory representation of schema
+var msgModel = mongoose.model('Message', msgSchema);
+
+// WRITE MSG TO DB
+var msgObjToSave = new msgModel({message: 'This is a fresh message' });
+msgObjToSave.save(
+    function (err){
+        if (err)
+            console.log('Failed to Save Message');
+});
+
+
+// READ MSG FROM DB
+var msgFromDB;
+msgModel.findOne().exec(function(err, msgDocument){
+    msgFromDB = msgDocument.message;
+    console.log('Got the message from DB '+msgFromDB);
+});
+
+
+app.get('/partials/:partialPath', function(req, res) {
+    console.log('partial requested '+req.params.partialPath);
+    res.render('partials/' + req.params.partialPath);
+});
+
+
+app.get('/', function(req, res){
+    console.log('main page requested');
+    res.render('index', {
+        msgFromDB : msgFromDB
+    });
+});
+
 
 var port = 3000;
 app.listen(port);
